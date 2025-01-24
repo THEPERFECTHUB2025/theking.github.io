@@ -219,8 +219,23 @@
         const backgroundVideo = document.getElementById("backgroundVideo");
         const volumeSlider = document.getElementById("volumeSlider");
         const muteButton = document.getElementById("muteButton");
-    
-        
+
+        const keyDisplay = document.createElement("div");
+        const copyButton = document.createElement("button");
+        keyDisplay.style.color = "#00ff00";
+        keyDisplay.style.fontSize = "18px";
+        copyButton.textContent = "Copy Key";
+        copyButton.style.marginTop = "10px";
+        copyButton.style.padding = "8px 16px";
+        copyButton.style.background = "#00ccff";
+        copyButton.style.border = "none";
+        copyButton.style.borderRadius = "5px";
+        copyButton.style.cursor = "pointer";
+        copyButton.style.color = "#000";
+        document.querySelector(".content").appendChild(keyDisplay);
+        document.querySelector(".content").appendChild(copyButton);
+        keyDisplay.style.display = "none";
+        copyButton.style.display = "none";
         const savedVolume = localStorage.getItem("videoVolume");
         if (savedVolume !== null) {
             backgroundVideo.volume = parseFloat(savedVolume);
@@ -234,9 +249,14 @@
             backgroundVideo.play().catch((error) => {
                 console.warn("Autoplay bloqué. La vidéo sera lue après une interaction.");
             });
+
+           
+            const savedKeyData = JSON.parse(localStorage.getItem("keyData"));
+            if (savedKeyData && savedKeyData.key) {
+                displayKey(savedKeyData.key);
+            }
         });
-    
-       
+            
         volumeSlider.addEventListener("input", (event) => {
             const volume = event.target.value;
             backgroundVideo.volume = volume; 
@@ -264,44 +284,134 @@
         localStorage.setItem("visitorCount", visitorCount);
         userCountDisplay.textContent = visitorCount;
     
-        
+        async function getUserIP() {
+    try {
+        const response = await fetch("https://api.ipify.org?format=json");
+        const data = await response.json();
+        return data.ip; 
+    } catch (error) {
+        console.error("Erreur lors de la récupération de l'IP :", error);
+        return null;
+    }
+}
+          
         function getCooldown() {
             const cooldown = localStorage.getItem("cooldown");
             return cooldown ? new Date(cooldown) : null;
         }
     
         function updateTimer() {
-            const cooldownEnd = getCooldown();
-            const now = new Date();
-    
-            if (cooldownEnd && now < cooldownEnd) {
-                const diff = Math.floor((cooldownEnd - now) / 1000); 
-                const hours = Math.floor(diff / 3600);
-                const minutes = Math.floor((diff % 3600) / 60);
-                const seconds = diff % 60;
-                timerDisplay.innerText = `You can generate a new key in: ${hours}h ${minutes}m ${seconds}s`;
-                generateButton.disabled = true;
-            } else {
-                timerDisplay.innerText = "";
-                generateButton.disabled = false;
-            }
-        }
+    const cooldownEnd = getCooldown();
+    const now = new Date();
+
+    if (cooldownEnd && now < cooldownEnd) {
+        const diff = Math.floor((cooldownEnd - now) / 1000);
+        const hours = Math.floor(diff / 3600);
+        const minutes = Math.floor((diff % 3600) / 60);
+        const seconds = diff % 60;
+        timerDisplay.innerText = `You can generate a new key in: ${hours}h ${minutes}m ${seconds}s`;
+        generateButton.disabled = true;
+    } else {
+        timerDisplay.innerText = "";
+        generateButton.disabled = false;
+    }
+}
     
         setInterval(updateTimer, 1000);
         updateTimer();
     
-        generateButton.addEventListener("click", () => {
-            const now = new Date();
-            const nextAvailableTime = new Date(now.getTime() + 12 * 60 * 60 * 1000); 
-            localStorage.setItem("cooldown", nextAvailableTime);
-            window.location.href = "https://link-hub.net/501130/rivalsxthekingexploiter";
-        });
+        generateButton.addEventListener("click", async () => {
+    const now = new Date();
+    const nextAvailableTime = new Date(now.getTime() + 12 * 60 * 60 * 1000); 
+    localStorage.setItem("cooldown", nextAvailableTime);
+
     
-        resetButton.addEventListener("click", () => {
-            localStorage.removeItem("cooldown");
-            alert("Key has been reset! You can now generate a new key.");
-            updateTimer();
+    const key = Array.from(crypto.getRandomValues(new Uint8Array(16)))
+        .map(b => b.toString(16).padStart(2, "0"))
+        .join("");
+
+    const userIP = await getUserIP(); 
+    if (userIP) {
+        try {
+            
+            const response = await fetch("/api/generate-key", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ key, ip: userIP }),
+            });
+
+            if (response.ok) {
+                localStorage.setItem("keyData", JSON.stringify({ key, ip: userIP })); 
+                displayKey(key); 
+            } else {
+                alert("Erreur lors de la sauvegarde de la clé sur le serveur.");
+            }
+        } catch (error) {
+            console.error("Erreur lors de l'envoi au serveur :", error);
+        }
+    } else {
+        alert("Erreur : Impossible de récupérer votre IP.");
+    }
+
+    
+    const newWindow = window.open("", "_blank");
+    newWindow.document.write(`
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Your Key</title>
+            <style>
+                body {
+                    background-color: black;
+                    color: white;
+                    font-family: Arial, sans-serif;
+                    text-align: center;
+                    margin-top: 20%;
+                }
+                .key {
+                    font-size: 24px;
+                    color: #00ff00;
+                }
+            </style>
+        </head>
+        <body>
+            <h1>Here is your unique key:</h1>
+            <div class="key">${key}</div>
+            <p>Valid for 12 hours</p>
+        </body>
+        </html>
+    `);
+    updateTimer(); 
+});
+
+
+resetButton.addEventListener("click", () => {
+    localStorage.removeItem("cooldown");
+    localStorage.removeItem("keyData");
+    keyDisplay.style.display = "none";
+    copyButton.style.display = "none";
+    alert("Key has been reset! You can now generate a new key.");
+    updateTimer();
+});
+
+function displayKey(key) {
+    keyDisplay.textContent = `Generated Key: ${key}`;
+    keyDisplay.style.display = "block";
+    copyButton.style.display = "block";
+
+    
+    copyButton.addEventListener("click", () => {
+        navigator.clipboard.writeText(key).then(() => {
+            alert("Key copied to clipboard!");
+        }).catch(() => {
+            alert("Failed to copy the key.");
         });
+    });
+}
     </script>
 </body>
 </html>
