@@ -2,46 +2,36 @@ const express = require("express");
 const app = express();
 app.use(express.json());
 
+let validKeys = []; // Stockage des clés générées
 
-const blacklistedDomains = [
-    "bypass.city",
-    "bypassunlock.com",
-    "adlinkbypass.com",
-    "linkvertise-bypasser.vercel.app"
-];
+// Générer une clé unique
+function generateKey() {
+    return require("crypto").randomBytes(16).toString("hex");
+}
 
-app.use((req, res, next) => {
-    const referer = req.get("Referer");
-    if (referer) {
-        const refDomain = new URL(referer).hostname;
-        if (blacklistedDomains.includes(refDomain)) {
-            console.log(`Blacklisted domain detected: ${refDomain}`);
-            return res.status(403).send("Access Denied: Bypass Detected");
-        }
+// Endpoint pour générer une clé
+app.post("/api/validate-key", (req, res) => {
+    console.log("Validation request received:", req.body); // Affiche les données reçues
+    const { key } = req.body;
+    if (validKeys.includes(key)) {
+        res.json({ success: true, message: "Key is valid" });
+    } else {
+        res.json({ success: false, message: "Invalid key" });
     }
-    next();
 });
 
 
-
-app.post("/api/validate", (req, res) => {
-    const { action } = req.body;
-
-    if (action === "generateKey") {
-        console.log("Valid key generation request received.");
-       
-        return res.json({ redirectUrl: "https://link-hub.net/501130/rivalsxthekingexploiter" });
+// Endpoint pour valider une clé
+app.post("/api/validate-key", (req, res) => {
+    const { key } = req.body;
+    if (validKeys.includes(key)) {
+        res.json({ success: true, message: "Key is valid" });
+    } else {
+        res.json({ success: false, message: "Invalid key" });
     }
-
-    console.log("Invalid action received:", action);
-    res.status(403).send("Invalid action");
 });
 
-app.get("/", (req, res) => {
-    res.send("Welcome to Rivals X The King!");
-});
-
-
+// Démarrer le serveur
 app.listen(3000, () => {
     console.log("Server running on http://localhost:3000");
 });
