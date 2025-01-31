@@ -219,10 +219,6 @@
         const backgroundVideo = document.getElementById("backgroundVideo");
         const volumeSlider = document.getElementById("volumeSlider");
         const muteButton = document.getElementById("muteButton");
-    
-        // Clé actuelle et bouton de copie
-       
-// Clé actuelle et bouton de copie
         const keyDisplay = document.createElement("div");
         const copyButton = document.createElement("button");
         keyDisplay.style.color = "#00ff00";
@@ -253,7 +249,7 @@
                 console.warn("Autoplay bloqué. La vidéo sera lue après une interaction.");
             });
 
-            // Charger la clé existante
+           
             const savedKeyData = JSON.parse(localStorage.getItem("keyData"));
             if (savedKeyData && savedKeyData.key) {
                 displayKey(savedKeyData.key);
@@ -297,7 +293,7 @@
                 return null;
             }
         }
-          // Gestion de la limitation des clés
+         
         function getCooldown() {
             const cooldown = localStorage.getItem("cooldown");
             return cooldown ? new Date(cooldown) : null;
@@ -308,7 +304,7 @@
     const now = new Date();
 
     if (cooldownEnd && now < cooldownEnd) {
-        const diff = Math.floor((cooldownEnd - now) / 1000); // En secondes
+        const diff = Math.floor((cooldownEnd - now) / 1000);
         const hours = Math.floor(diff / 3600);
         const minutes = Math.floor((diff % 3600) / 60);
         const seconds = diff % 60;
@@ -325,18 +321,18 @@
     
         generateButton.addEventListener("click", async () => {
     const now = new Date();
-    const nextAvailableTime = new Date(now.getTime() + 12 * 60 * 60 * 1000); // 12 heures
+    const nextAvailableTime = new Date(now.getTime() + 12 * 60 * 60 * 1000);
     localStorage.setItem("cooldown", nextAvailableTime);
 
-    // Génération d'une clé unique
+    
     const key = Array.from(crypto.getRandomValues(new Uint8Array(16)))
         .map(b => b.toString(16).padStart(2, "0"))
         .join("");
 
-    const userIP = await getUserIP(); // Récupère l'IP de l'utilisateur
+    const userIP = await getUserIP(); 
     if (userIP) {
         try {
-            // Envoie la clé et l'IP au serveur
+            
             const response = await fetch("/api/generate-key", {
                 method: "POST",
                 headers: {
@@ -346,8 +342,8 @@
             });
 
             if (response.ok) {
-                localStorage.setItem("keyData", JSON.stringify({ key, ip: userIP })); // Stocke la clé localement
-                displayKey(key); // Affiche la clé dans l'interface
+                localStorage.setItem("keyData", JSON.stringify({ key, ip: userIP })); 
+                displayKey(key);
             } else {
                 alert("Erreur lors de la sauvegarde de la clé sur le serveur.");
             }
@@ -358,7 +354,7 @@
         alert("Erreur : Impossible de récupérer votre IP.");
     }
 
-    // Ouvre une nouvelle fenêtre avec la clé unique
+    
     const newWindow = window.open("", "_blank");
     newWindow.document.write(`
         <!DOCTYPE html>
@@ -388,7 +384,7 @@
         </body>
         </html>
     `);
-    updateTimer(); // Met à jour le minuteur
+    updateTimer(); 
 });
 
 resetButton.addEventListener("click", () => {
@@ -400,13 +396,12 @@ resetButton.addEventListener("click", () => {
     updateTimer();
 });
 
-// Fonction pour afficher la clé
+
 function displayKey(key) {
     keyDisplay.textContent = `Generated Key: ${key}`;
     keyDisplay.style.display = "block";
     copyButton.style.display = "block";
 
-    // Copier la clé dans le presse-papier
     copyButton.addEventListener("click", () => {
         navigator.clipboard.writeText(key).then(() => {
             alert("Key copied to clipboard!");
