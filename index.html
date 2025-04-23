@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            position: relative;
+            background: #000; /* Fallback background color */
+        }
+
+        /* Canvas background styling */
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Places the canvas behind other content */
+        }
+
+        /* Style the pre element to match the previous screenshot */
+        pre {
+            color: #00ffcc; /* Neon cyan text */
+            font-size: 1rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #00ffcc;
+            border-radius: 10px;
+            background: rgba(40, 40, 40, 0.9);
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+            animation: glow 2s ease-in-out infinite alternate;
+            max-width: 90%;
+            z-index: 1; /* Ensures the text stays above the canvas */
+        }
+
+        /* Glowing animation for the text */
+        @keyframes glow {
+            from {
+                box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
+            }
+            to {
+                box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
+            }
+        }
+
+        /* Add a subtle hover effect */
+        pre:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- Canvas for the 3D background effect -->
+    <canvas id="bgCanvas"></canvas>
+
+    <!-- Text content -->
+    <pre>
+    loadstring(game:HttpGet('https://raw.githubusercontent.com/THEPERFECTHUB2025/-S_C_R_I_P_T-/refs/heads/main/AHAHAHAHAHAHAHHHHHHHHHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHHAHAHHAAAAAAAAAAA'))()
+    </pre>
+
+    <!-- JavaScript to create the 3D background effect -->
+    <script>
+        const canvas = document.getElementById('bgCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Set canvas size to match window
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // Particle class to represent nodes
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.z = Math.random() * 100; // Depth for 3D effect
+                this.size = Math.random() * 3 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.5;
+                this.speedY = (Math.random() - 0.5) * 0.5;
+                this.color = `hsl(${Math.random() * 60 + 180}, 100%, 50%)`; // Neon colors (purple to cyan)
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+
+                // Bounce off edges
+                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+            }
+
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        // Create particles
+        const particles = [];
+        for (let i = 0; i < 50; i++) {
+            particles.push(new Particle());
+        }
+
+        // Animation function
+        function animate() {
+            // Clear canvas with a semi-transparent background for a fading effect
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Update and draw particles
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+
+            // Draw lines between nearby particles
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+
+                    if (distance < 150) {
+                        ctx.strokeStyle = `rgba(0, 255, 204, ${1 - distance / 150})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            }
+
+            // Request next frame
+            requestAnimationFrame(animate);
+        }
+
+        // Start the animation
+        animate();
+    </script>
+</body>
+</html>
