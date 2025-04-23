@@ -6,70 +6,158 @@
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
             font-family: 'Courier New', Courier, monospace;
             overflow: hidden;
             position: relative;
-            background: #000; /* Fallback background color */
+            background: #02020a; /* Ultra-dark space background */
         }
 
-        /* Canvas background styling */
+        /* Reflective surface effect at the bottom */
+        body::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 30%;
+            background: linear-gradient(180deg, transparent, rgba(0, 255, 255, 0.1));
+            z-index: -2;
+            animation: wave 10s infinite ease-in-out;
+        }
+
+        /* Nebula-like background layer with gradient */
+        body::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(255, 0, 255, 0.1), rgba(0, 255, 255, 0.1), transparent);
+            opacity: 0.7;
+            animation: nebulaShift 20s infinite linear;
+            z-index: -3;
+        }
+
+        /* Canvas for the 3D heart effect */
         canvas {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: -1; /* Places the canvas behind other content */
+            z-index: -1;
         }
 
-        /* Style the pre element to match the previous screenshot */
+        /* Style the pre elements with a sleek holographic design */
         pre {
-            color: #00ffcc; /* Neon cyan text */
+            color: #00ffff; /* Neon cyan text */
             font-size: 1rem;
             line-height: 1.5;
             word-wrap: break-word;
             white-space: pre-wrap;
             text-align: center;
             padding: 20px;
-            border: 2px solid #00ffcc;
-            border-radius: 10px;
-            background: rgba(40, 40, 40, 0.9);
-            box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-            animation: glow 2s ease-in-out infinite alternate;
+            border: none;
+            border-radius: 15px;
+            background: linear-gradient(145deg, rgba(0, 20, 40, 0.4), rgba(0, 40, 80, 0.4));
+            backdrop-filter: blur(10px);
+            box-shadow: 0 0 25px rgba(0, 255, 255, 0.7), inset 0 0 10px rgba(0, 255, 255, 0.3);
             max-width: 90%;
-            z-index: 1; /* Ensures the text stays above the canvas */
+            margin: 15px 0;
+            z-index: 1;
+            position: relative;
+            overflow: hidden;
+            animation: hologramFlicker 1.5s infinite;
         }
 
-        /* Glowing animation for the text */
-        @keyframes glow {
-            from {
-                box-shadow: 0 0 15px rgba(0, 255, 204, 0.5);
-            }
-            to {
-                box-shadow: 0 0 25px rgba(0, 255, 204, 0.8);
-            }
+        /* Holographic border effect */
+        pre::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #ff00ff, #00ffff);
+            z-index: -1;
+            border-radius: 15px;
+            filter: blur(8px);
+            animation: borderGlow 1.5s infinite linear;
         }
 
-        /* Add a subtle hover effect */
+        /* Glitchy typing animation for the text */
+        pre span {
+            display: inline-block;
+            opacity: 0;
+            animation: glitchType 1s forwards, glitch 0.3s infinite;
+            animation-delay: calc(var(--char-index) * 0.02s);
+        }
+
+        /* Keyframes for animations */
+        @keyframes glitchType {
+            0% { opacity: 0; transform: translateX(-3px); }
+            50% { opacity: 0.6; transform: translateX(3px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-1px, 1px); }
+            40% { transform: translate(1px, -1px); }
+            60% { transform: translate(-1px, 0); }
+            80% { transform: translate(1px, 1px); }
+            100% { transform: translate(0); }
+        }
+
+        @keyframes borderGlow {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 400% 50%; }
+        }
+
+        @keyframes hologramFlicker {
+            0% { opacity: 0.6; }
+            5% { opacity: 0.4; }
+            10% { opacity: 0.6; }
+            15% { opacity: 0.5; }
+            20% { opacity: 0.6; }
+            100% { opacity: 0.6; }
+        }
+
+        @keyframes nebulaShift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: 300% 300%; }
+        }
+
+        @keyframes wave {
+            0% { transform: translateY(0); opacity: 0.1; }
+            50% { transform: translateY(10px); opacity: 0.2; }
+            100% { transform: translateY(0); opacity: 0.1; }
+        }
+
+        /* Hover effect with a 3D tilt and glow */
         pre:hover {
-            transform: scale(1.02);
-            transition: transform 0.3s ease;
+            transform: scale(1.02) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 0 35px rgba(0, 255, 255, 1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
     </style>
 </head>
 <body>
-    <!-- Canvas for the 3D background effect -->
+    <!-- Canvas for the 3D heart effect -->
     <canvas id="bgCanvas"></canvas>
 
-    <!-- Text content -->
-    <pre>
-    loadstring(game:HttpGet('https://raw.githubusercontent.com/THEPERFECTHUB2025/-S_C_R_I_P_T-/refs/heads/main/AHAHAHAHAHAHAHHHHHHHHHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHHAHAHHAAAAAAAAAAA'))()
-    </pre>
+    <!-- First text content with typing effect -->
+    <pre id="text1"></pre>
 
-    <!-- JavaScript to create the 3D background effect -->
+    <!-- Second text content with typing effect -->
+    <pre id="text2"></pre>
+
+    <!-- JavaScript to create the 3D heart effect -->
     <script>
         const canvas = document.getElementById('bgCanvas');
         const ctx = canvas.getContext('2d');
@@ -84,77 +172,148 @@
             canvas.height = window.innerHeight;
         });
 
-        // Particle class to represent nodes
-        class Particle {
+        // Class to manage 3D heart shapes
+        class Heart3D {
             constructor() {
-                this.x = Math.random() * canvas.width;
-                this.y = Math.random() * canvas.height;
-                this.z = Math.random() * 100; // Depth for 3D effect
-                this.size = Math.random() * 3 + 1;
-                this.speedX = (Math.random() - 0.5) * 0.5;
-                this.speedY = (Math.random() - 0.5) * 0.5;
-                this.color = `hsl(${Math.random() * 60 + 180}, 100%, 50%)`; // Neon colors (purple to cyan)
-            }
+                this.hearts = [];
+                this.numHearts = 5; // Number of hearts
+                this.centerX = canvas.width / 2;
+                this.centerY = canvas.height / 2;
+                this.rotation = 0;
+                this.pulse = 0;
 
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
+                // Initialize hearts with different depths and scales
+                for (let i = 0; i < this.numHearts; i++) {
+                    this.hearts.push({
+                        z: i * 50, // Depth
+                        scale: 1 - i * 0.15, // Scale based on depth
+                        alpha: 1 - i * 0.2 // Transparency based on depth
+                    });
+                }
 
-                // Bounce off edges
-                if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
-                if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
-            }
-
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
-        }
-
-        // Create particles
-        const particles = [];
-        for (let i = 0; i < 50; i++) {
-            particles.push(new Particle());
-        }
-
-        // Animation function
-        function animate() {
-            // Clear canvas with a semi-transparent background for a fading effect
-            ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-            // Update and draw particles
-            particles.forEach(p => {
-                p.update();
-                p.draw();
-            });
-
-            // Draw lines between nearby particles
-            for (let i = 0; i < particles.length; i++) {
-                for (let j = i + 1; j < particles.length; j++) {
-                    const dx = particles[i].x - particles[j].x;
-                    const dy = particles[i].y - particles[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < 150) {
-                        ctx.strokeStyle = `rgba(0, 255, 204, ${1 - distance / 150})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[i].x, particles[i].y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
+                // Small set of particles for light flares
+                this.particles = [];
+                for (let i = 0; i < 20; i++) {
+                    this.particles.push({
+                        x: Math.random() * canvas.width,
+                        y: Math.random() * canvas.height,
+                        size: Math.random() * 2 + 1,
+                        alpha: Math.random() * 0.5 + 0.2
+                    });
                 }
             }
 
-            // Request next frame
+            // Function to draw a heart shape at a given position and scale
+            drawHeart(x, y, scale, alpha) {
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.scale(scale, scale);
+
+                const size = 10 * (1 + Math.sin(this.pulse) * 0.2); // Pulsing size
+                ctx.beginPath();
+                ctx.moveTo(0, size * 0.3);
+
+                // Draw the left side of the heart
+                ctx.bezierCurveTo(
+                    -size * 0.5, -size * 0.5,
+                    -size * 1.5, -size * 0.5,
+                    -size * 0.5, size
+                );
+
+                // Draw the right side of the heart
+                ctx.bezierCurveTo(
+                    size * 1.5, -size * 0.5,
+                    size * 0.5, -size * 0.5,
+                    0, size * 0.3
+                );
+
+                // Apply gradient fill
+                const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, size * 1.5);
+                gradient.addColorStop(0, `rgba(0, 255, 255, ${alpha})`);
+                gradient.addColorStop(1, `rgba(255, 0, 255, ${alpha * 0.5})`);
+
+                ctx.fillStyle = gradient;
+                ctx.fill();
+
+                // Add a glowing outline
+                ctx.strokeStyle = `rgba(0, 255, 255, ${alpha})`;
+                ctx.lineWidth = 1;
+                ctx.stroke();
+
+                ctx.restore();
+            }
+
+            draw() {
+                this.rotation += 0.005;
+                this.pulse += 0.03;
+
+                ctx.save();
+                ctx.translate(this.centerX, this.centerY);
+
+                // Draw each heart at different depths
+                this.hearts.forEach(heart => {
+                    const { z, scale, alpha } = heart;
+
+                    // Rotate each heart
+                    const rotatedX = 0 * Math.cos(this.rotation) - 0 * Math.sin(this.rotation);
+                    const rotatedY = 0 * Math.sin(this.rotation) + 0 * Math.cos(this.rotation);
+
+                    this.drawHeart(rotatedX, rotatedY - z, scale, alpha);
+                });
+
+                ctx.restore();
+
+                // Draw minimal particles as light flares
+                this.particles.forEach(p => {
+                    ctx.fillStyle = `rgba(0, 255, 255, ${p.alpha})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.fillStyle = `rgba(0, 255, 255, ${p.alpha * 0.5})`;
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, p.size * 2, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+            }
+        }
+
+        // Create 3D heart effect
+        const heart3D = new Heart3D();
+
+        // Animation function
+        function animate() {
+            ctx.fillStyle = 'rgba(2, 2, 10, 0.08)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Draw 3D hearts and particles
+            heart3D.draw();
+
             requestAnimationFrame(animate);
         }
 
         // Start the animation
         animate();
+
+        // Typing effect for the text
+        const text1 = "loadstring(game:HttpGet('https://raw.githubusercontent.com/THEPERFECTHUB2025/-S_C_R_I_P_T-/refs/heads/main/AHAHAHAHAHAHAHHHHHHHHHHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHAHHAHAHHAAAAAAAAAAA'))()";
+        const text2 = "Owner theperfectexsploite";
+        const text1Element = document.getElementById('text1');
+        const text2Element = document.getElementById('text2');
+
+        text1.split('').forEach((char, index) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.setProperty('--char-index', index);
+            text1Element.appendChild(span);
+        });
+
+        text2.split('').forEach((char, index) => {
+            const span = document.createElement('span');
+            span.textContent = char;
+            span.style.setProperty('--char-index', index);
+            text2Element.appendChild(span);
+        });
     </script>
 </body>
 </html>
